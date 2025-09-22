@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>edudocsX - Educational Document Generator</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="script.js"></script>
+</head>
+<body>
+    <!-- Landing Page -->
+    <div id="landing-page" class="page active">
+        <header>
+            <nav class="navbar">
+                <div class="nav-brand">
+                    <h1>edudocsX</h1>
+                </div>
+                <div class="nav-buttons">
+                    <button class="btn btn-outline" onclick="showLogin()">Login</button>
+                    <button class="btn btn-primary" onclick="showSignup()">Sign Up</button>
+                </div>
+            </nav>
+        </header>
+
+        <main class="hero">
+            <div class="hero-content">
+                <h1>Generate Educational Documents Instantly</h1>
+                <p>Create professional marksheets, certificates, and admit cards with ease</p>
+                <button class="btn btn-primary btn-large" onclick="showSignup()">Get Started Free</button>
+            </div>
+        </main>
+
+        <section class="features">
+            <div class="container">
+                <h2>Features</h2>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h3>📋 Marksheet Generator</h3>
+                        <p>Create professional student marksheets with customizable templates</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>🏆 Certificate Generator</h3>
+                        <p>Generate beautiful certificates for achievements and completions</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>🎫 Admit Card Generator</h3>
+                        <p>Create exam admit cards with all necessary student information</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="pricing">
+            <div class="container">
+                <h2>Pricing Plans</h2>
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <h3>Free</h3>
+                        <div class="price">$0<span>/month</span></div>
+                        <ul>
+                            <li>5 documents per month</li>
+                            <li>Basic templates</li>
+                            <li>PDF download</li>
+                        </ul>
+                        <button class="btn btn-outline">Current Plan</button>
+                    </div>
+                    <div class="pricing-card featured">
+                        <h3>Pro</h3>
+                        <div class="price">$9<span>/month</span></div>
+                        <ul>
+                            <li>Unlimited documents</li>
+                            <li>Premium templates</li>
+                            <li>History management</li>
+                            <li>Custom branding</li>
+                        </ul>
+                        <button class="btn btn-primary">Upgrade</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal auth-modal">
+        <div class="modal-content auth-modal-content">
+            <div class="auth-header">
+                <span class="close" onclick="closeModal('login-modal')">&times;</span>
+                <div class="auth-logo">
+                    <h2>🎓 edudocsX</h2>
+                    <p>Welcome back!</p>
+                </div>
+            </div>
+            <form id="login-form" class="auth-form">
+                <div class="form-group floating-label">
+                    <input type="email" id="login-email" class="auth-input" required>
+                    <label for="login-email" class="floating-label-text">Email Address</label>
+                    <div class="input-icon"></div>
+                </div>
+                <div class="form-group floating-label">
+                    <input type="password" id="login-password" class="auth-input" required>
+                    <label for="login-password" class="floating-label-text">Password</label>
+                    <div class="input-icon"></div>
+                </div>
+                <div class="auth-options">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="remember-me">
+                        <span class="checkmark"></span>
+                        Remember me
+                    </label>
+                    <a href="#" class="forgot-password">Forgot Password?</a>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full auth-submit">
+                    <span>Login</span>
+                    <div class="btn-ripple"></div>
+                </button>
+            </form>
+            <div class="auth-divider">
+                <span>or continue with</span>
+            </div>
+            <div class="social-login">
+                <button class="social-btn google-btn">
+                    <span class="social-icon">🌐</span>
+                    Google
+                </button>
+                <button class="social-btn github-btn">
+                    <span class="social-icon">⚡</span>
+                    GitHub
+                </button>
+            </div>
+            <p class="auth-footer">Don't have an account? <a href="#" onclick="showSignup()" class="auth-link">Sign up</a></p>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div id="signup-modal" class="modal auth-modal">
+        <div class="modal-content auth-modal-content">
+            <div class="auth-header">
+                <span class="close" onclick="closeModal('signup-modal')">&times;</span>
+                <div class="auth-logo">
+                    <h2>🎓 edudocsX</h2>
+                    <p>Join thousands of educators!</p>
+                </div>
+            </div>
+            <form id="signup-form" class="auth-form">
+                <div class="form-group floating-label">
+                    <input type="text" id="signup-name" class="auth-input" required>
+                    <label for="signup-name" class="floating-label-text">Full Name</label>
+                    <div class="input-icon"></div>
+                </div>
+                <div class="form-group floating-label">
+                    <input type="email" id="signup-email" class="auth-input" required>
+                    <label for="signup-email" class="floating-label-text">Email Address</label>
+                    <div class="input-icon"></div>
+                </div>
+                <div class="form-group floating-label">
+                    <input type="password" id="signup-password" class="auth-input" required>
+                    <label for="signup-password" class="floating-label-text">Password</label>
+                    <div class="input-icon"></div>
+                </div>
+                <div class="password-strength">
+                    <div class="strength-bar">
+                        <div class="strength-fill"></div>
+                    </div>
+                    <span class="strength-text">Password strength</span>
+                </div>
+                <div class="auth-options">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="terms-agree" required>
+                        <span class="checkmark"></span>
+                        I agree to the <a href="#" class="auth-link">Terms of Service</a> and <a href="#" class="auth-link">Privacy Policy</a>
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full auth-submit">
+                    <span>Create Account</span>
+                    <div class="btn-ripple"></div>
+                </button>
+            </form>
+            <div class="auth-divider">
+                <span>or continue with</span>
+            </div>
+            <div class="social-login">
+                <button class="social-btn google-btn">
+                    <span class="social-icon">🌐</span>
+                    Google
+                </button>
+                <button class="social-btn github-btn">
+                    <span class="social-icon">⚡</span>
+                    GitHub
+                </button>
+            </div>
+            <p class="auth-footer">Already have an account? <a href="#" onclick="showLogin()" class="auth-link">Login</a></p>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="page">
+        <header class="dashboard-header">
+            <div class="nav-brand">
+                <h1>edudocsX</h1>
+            </div>
+            <div class="user-menu">
+                <span id="user-name">Welcome!</span>
+                <button class="btn btn-outline" onclick="logout()">Logout</button>
+            </div>
+        </header>
+
+        <main class="dashboard-main">
+            <div class="container">
+                <h2>What would you like to generate?</h2>
+                <div class="dashboard-grid">
+                    <div class="dashboard-card" onclick="showMarksheetForm()">
+                        <div class="card-icon">📋</div>
+                        <h3>Generate Marksheet</h3>
+                        <p>Create student marksheets with grades and subjects</p>
+                    </div>
+                    <div class="dashboard-card" onclick="showCertificateForm()">
+                        <div class="card-icon">🏆</div>
+                        <h3>Generate Certificate</h3>
+                        <p>Create certificates for achievements and completions</p>
+                    </div>
+                    <div class="dashboard-card" onclick="showAdmitCardForm()">
+                        <div class="card-icon">🎫</div>
+                        <h3>Generate Admit Card</h3>
+                        <p>Create exam admit cards with student details</p>
+                    </div>
+                    <div class="dashboard-card" onclick="showIdCardForm()">
+                        <div class="card-icon">🆔</div>
+                        <h3>Generate ID Card</h3>
+                        <p>Create professional ID cards with photo upload</p>
+                    </div>
+                    <div class="dashboard-card bulk-card" onclick="showBulkGenerationForm()">
+                        <div class="card-icon">📊</div>
+                        <h3>Bulk Generation</h3>
+                        <p>Upload CSV/Excel file to generate up to 100 documents at once</p>
+                        <div class="bulk-badge">NEW</div>
+                    </div>
+                </div>
+                <div class="dashboard-actions">
+                    <button class="btn btn-outline" onclick="showHistory()">My History</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Marksheet Form -->
+    <div id="marksheet-form" class="page">
+        <header class="form-header">
+            <button class="btn btn-outline" onclick="showDashboard()">← Back to Dashboard</button>
+            <h2>Generate Marksheet</h2>
+        </header>
+        <main class="form-main">
+            <div class="container">
+                <form id="marksheet-data">
+                    <div class="form-group">
+                        <label for="institute-name">Institute Name</label>
+                        <input type="text" id="institute-name" placeholder="e.g., St. Mary's High School" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="student-name">Student Name</label>
+                            <input type="text" id="student-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="roll-no">Roll Number</label>
+                            <input type="text" id="roll-no" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="class-name">Class</label>
+                            <div class="dropdown-container">
+                                <select id="class-name" class="dropdown-select" onchange="handleClassChange()" required>
+                                    <option value="">Select Class</option>
+                                    <option value="LKG">LKG</option>
+                                    <option value="UKG">UKG</option>
+                                    <option value="1st Grade">1st Grade</option>
+                                    <option value="2nd Grade">2nd Grade</option>
+                                    <option value="3rd Grade">3rd Grade</option>
+                                    <option value="4th Grade">4th Grade</option>
+                                    <option value="5th Grade">5th Grade</option>
+                                    <option value="6th Grade">6th Grade</option>
+                                    <option value="7th Grade">7th Grade</option>
+                                    <option value="8th Grade">8th Grade</option>
+                                    <option value="9th Grade">9th Grade</option>
+                                    <option value="10th Grade">10th Grade</option>
+                                    <option value="11th Grade">11th Grade</option>
+                                    <option value="12th Grade">12th Grade</option>
+                                    <option value="add-manually">Add Manually</option>
+                                </select>
+                                <input type="text" id="class-name-manual" class="manual-input" placeholder="Enter class name" style="display: none;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="exam-name">Exam Name</label>
+                            <div class="dropdown-container">
+                                <select id="exam-name" class="dropdown-select" onchange="handleExamChange()" required>
+                                    <option value="">Select Exam Type</option>
+                                    <option value="Half Yearly">Half Yearly</option>
+                                    <option value="Annual">Annual</option>
+                                    <option value="Quarterly">Quarterly</option>
+                                    <option value="Monthly Test">Monthly Test</option>
+                                    <option value="Unit Test">Unit Test</option>
+                                    <option value="Final Exam">Final Exam</option>
+                                    <option value="Mid Term">Mid Term</option>
+                                    <option value="Pre Board">Pre Board</option>
+                                    <option value="add-manually">Add Manually</option>
+                                </select>
+                                <input type="text" id="exam-name-manual" class="manual-input" placeholder="Enter exam name" style="display: none;">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="subjects-section">
+                        <h3>Subjects & Marks</h3>
+                        <div id="subjects-container">
+                            <div class="subject-row">
+                                <div class="subject-dropdown-container">
+                                    <select class="subject-name dropdown-select" onchange="handleSubjectChange(this)" required>
+                                        <option value="">Select Subject</option>
+                                        <option value="Mathematics">Mathematics</option>
+                                        <option value="Science">Science</option>
+                                        <option value="English">English</option>
+                                        <option value="History">History</option>
+                                        <option value="Geography">Geography</option>
+                                        <option value="Physics">Physics</option>
+                                        <option value="Chemistry">Chemistry</option>
+                                        <option value="Biology">Biology</option>
+                                        <option value="Computer Science">Computer Science</option>
+                                        <option value="Physical Education">Physical Education</option>
+                                        <option value="Art & Craft">Art & Craft</option>
+                                        <option value="Music">Music</option>
+                                        <option value="Hindi">Hindi</option>
+                                        <option value="Sanskrit">Sanskrit</option>
+                                        <option value="Social Studies">Social Studies</option>
+                                        <option value="add-manually">Add Manually</option>
+                                    </select>
+                                    <input type="text" class="subject-name-manual manual-input" placeholder="Enter subject name" style="display: none;">
+                                </div>
+                                <div class="marks-container">
+                                    <select class="out-of-marks dropdown-select" required>
+                                        <option value="">Out Of</option>
+                                        <option value="10">10</option>
+                                        <option value="15">15</option>
+                                        <option value="20">20</option>
+                                        <option value="25">25</option>
+                                        <option value="30">30</option>
+                                        <option value="35">35</option>
+                                        <option value="40">40</option>
+                                        <option value="45">45</option>
+                                        <option value="50">50</option>
+                                        <option value="55">55</option>
+                                        <option value="60">60</option>
+                                        <option value="65">65</option>
+                                        <option value="70">70</option>
+                                        <option value="75">75</option>
+                                        <option value="80">80</option>
+                                        <option value="85">85</option>
+                                        <option value="90">90</option>
+                                        <option value="95">95</option>
+                                        <option value="100">100</option>
+                                    </select>
+                                    <input type="number" class="obtained-marks manual-input" placeholder="Obtained" min="0" required>
+                                </div>
+                                <button type="button" class="btn btn-danger btn-small" onclick="removeSubject(this)">Remove</button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-outline" onclick="addSubject()">Add Subject</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="marksheet-template">🎨 Template</label>
+                        <select id="marksheet-template" required>
+                            <option value="classic">Classic Blue</option>
+                            <option value="modern">Modern Green</option>
+                            <option value="elegant">Elegant Purple</option>
+                            <option value="minimal">Minimal Gray</option>
+                            <option value="academic">Academic Gold</option>
+                            <option value="professional">Professional Navy</option>
+                            <option value="premium">Premium Corporate</option>
+                            <option value="university">University Style</option>
+                            <option value="creative">Creative Design</option>
+                        </select>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" onclick="previewMarksheet()">Preview</button>
+                        <button type="submit" class="btn btn-primary">Generate PDF</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- Certificate Form -->
+    <div id="certificate-form" class="page">
+        <header class="form-header">
+            <button class="btn btn-outline" onclick="showDashboard()">← Back to Dashboard</button>
+            <h2>Generate Certificate</h2>
+        </header>
+        <main class="form-main">
+            <div class="container">
+                <form id="certificate-data">
+                    <div class="form-group">
+                        <label for="cert-institute-name">Institute Name</label>
+                        <input type="text" id="cert-institute-name" placeholder="e.g., St. Mary's High School" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cert-student-name">Student Name</label>
+                            <input type="text" id="cert-student-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cert-title">Certificate Title</label>
+                            <input type="text" id="cert-title" placeholder="e.g., Certificate of Excellence" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cert-date">Date</label>
+                            <input type="date" id="cert-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cert-remarks">Remarks</label>
+                            <textarea id="cert-remarks" placeholder="Additional remarks or achievements"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="certificate-template">Template</label>
+                        <select id="certificate-template">
+                            <option value="classic">Classic Professional</option>
+                            <option value="modern">Modern Corporate</option>
+                            <option value="elegant">Elegant Academic</option>
+                            <option value="minimal">Minimal Clean</option>
+                            <option value="formal">Formal Government</option>
+                            <option value="luxury">Luxury Premium</option>
+                            <option value="creative">Creative Artistic</option>
+                            <option value="achievement">Achievement Award</option>
+                        </select>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" onclick="previewCertificate()">Preview</button>
+                        <button type="submit" class="btn btn-primary">Generate PDF</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- Admit Card Form -->
+    <div id="admit-card-form" class="page">
+        <header class="form-header">
+            <button class="btn btn-outline" onclick="showDashboard()">← Back to Dashboard</button>
+            <h2>Generate Admit Card</h2>
+        </header>
+        <main class="form-main">
+            <div class="container">
+                <form id="admit-card-data">
+                    <div class="form-group">
+                        <label for="admit-institute-name">Institute Name</label>
+                        <input type="text" id="admit-institute-name" placeholder="e.g., St. Mary's High School" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="admit-student-name">Student Name</label>
+                            <input type="text" id="admit-student-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="admit-roll-no">Roll Number</label>
+                            <input type="text" id="admit-roll-no" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="exam-center">Exam Center</label>
+                            <input type="text" id="exam-center" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="exam-date">Exam Date</label>
+                            <input type="date" id="exam-date" required>
+                        </div>
+                    </div>
+
+                    <!-- Photo Upload Section -->
+                    <div class="photo-upload-section">
+                        <h3>📷 Photo Upload</h3>
+                        <div class="photo-upload-container">
+                            <div class="photo-preview" id="admit-photo-preview">
+                                <div class="photo-placeholder">
+                                    <div class="upload-icon">📷</div>
+                                    <p>Click to upload photo</p>
+                                    <small>Recommended: 300x400px, Max: 2MB</small>
+                                </div>
+                                <img id="admit-preview-image" style="display: none;" alt="Preview">
+                            </div>
+                            <input type="file" id="admit-photo-upload" accept="image/*" style="display: none;">
+                            <div class="photo-controls">
+                                <button type="button" class="btn btn-outline" onclick="triggerAdmitPhotoUpload()">Choose Photo</button>
+                                <button type="button" class="btn btn-danger" onclick="removeAdmitPhoto()" id="admit-remove-photo" style="display: none;">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="admit-card-template">Template</label>
+                        <select id="admit-card-template">
+                            <option value="classic">Classic Professional</option>
+                            <option value="modern">Modern Corporate</option>
+                            <option value="elegant">Elegant Academic</option>
+                            <option value="minimal">Minimal Clean</option>
+                            <option value="formal">Formal Government</option>
+                            <option value="luxury">Luxury Premium</option>
+                            <option value="security">Security Enhanced</option>
+                            <option value="compact">Compact Standard</option>
+                        </select>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" onclick="previewAdmitCard()">Preview</button>
+                        <button type="submit" class="btn btn-primary">Generate PDF</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- ID Card Form -->
+    <div id="id-card-form" class="page">
+        <header class="form-header">
+            <button class="btn btn-outline" onclick="showDashboard()">← Back to Dashboard</button>
+            <h2>Generate ID Card</h2>
+        </header>
+        <main class="form-main">
+            <div class="container">
+                <form id="id-card-generator" onsubmit="generateIdCard(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="id-institute-name">🏢 Institution Name</label>
+                            <input type="text" id="id-institute-name" placeholder="Enter institution name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="id-card-type">🆔 Card Type</label>
+                            <select id="id-card-type" required>
+                                <option value="">Select Card Type</option>
+                                <option value="student">Student ID</option>
+                                <option value="staff">Staff ID</option>
+                                <option value="faculty">Faculty ID</option>
+                                <option value="visitor">Visitor Pass</option>
+                                <option value="employee">Employee ID</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="id-full-name">👤 Full Name</label>
+                            <input type="text" id="id-full-name" placeholder="Enter full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="id-number">🔢 ID Number</label>
+                            <input type="text" id="id-number" placeholder="Enter ID number" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="id-department">🏛️ Department/Class</label>
+                            <select id="id-department" required>
+                                <option value="">Select Department/Class</option>
+                                <option value="Computer Science">Computer Science</option>
+                                <option value="Information Technology">Information Technology</option>
+                                <option value="Electronics & Communication">Electronics & Communication</option>
+                                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                                <option value="Civil Engineering">Civil Engineering</option>
+                                <option value="Electrical Engineering">Electrical Engineering</option>
+                                <option value="Business Administration">Business Administration</option>
+                                <option value="Finance & Accounting">Finance & Accounting</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="Human Resources">Human Resources</option>
+                                <option value="Operations">Operations</option>
+                                <option value="LKG">LKG</option>
+                                <option value="UKG">UKG</option>
+                                <option value="Class 1">Class 1</option>
+                                <option value="Class 2">Class 2</option>
+                                <option value="Class 3">Class 3</option>
+                                <option value="Class 4">Class 4</option>
+                                <option value="Class 5">Class 5</option>
+                                <option value="Class 6">Class 6</option>
+                                <option value="Class 7">Class 7</option>
+                                <option value="Class 8">Class 8</option>
+                                <option value="Class 9">Class 9</option>
+                                <option value="Class 10">Class 10</option>
+                                <option value="Class 11">Class 11</option>
+                                <option value="Class 12">Class 12</option>
+                                <option value="add-manually">Add Manually</option>
+                            </select>
+                            <input type="text" id="id-department-manual" placeholder="Enter department or class" style="display: none; margin-top: 10px;">
+                        </div>
+                        <div class="form-group">
+                            <label for="id-designation">💼 Designation/Year</label>
+                            <select id="id-designation" required>
+                                <option value="">Select Designation/Year</option>
+                                <option value="Director">Director</option>
+                                <option value="Manager">Manager</option>
+                                <option value="Assistant Manager">Assistant Manager</option>
+                                <option value="Team Lead">Team Lead</option>
+                                <option value="Senior Executive">Senior Executive</option>
+                                <option value="Executive">Executive</option>
+                                <option value="Junior Executive">Junior Executive</option>
+                                <option value="Student">Student</option>
+                                <option value="Intern">Intern</option>
+                                <option value="Professor">Professor</option>
+                                <option value="Associate Professor">Associate Professor</option>
+                                <option value="Assistant Professor">Assistant Professor</option>
+                                <option value="Lecturer">Lecturer</option>
+                                <option value="Lab Assistant">Lab Assistant</option>
+                                <option value="1st Year">1st Year</option>
+                                <option value="2nd Year">2nd Year</option>
+                                <option value="3rd Year">3rd Year</option>
+                                <option value="4th Year">4th Year</option>
+                                <option value="Final Year">Final Year</option>
+                                <option value="Visitor">Visitor</option>
+                                <option value="Contractor">Contractor</option>
+                                <option value="Security Guard">Security Guard</option>
+                                <option value="add-manually">Add Manually</option>
+                            </select>
+                            <input type="text" id="id-designation-manual" placeholder="Enter designation or year" style="display: none; margin-top: 10px;">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="id-blood-group">🩸 Blood Group</label>
+                            <select id="id-blood-group">
+                                <option value="">Select Blood Group</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="id-contact">📞 Contact Number</label>
+                            <input type="tel" id="id-contact" placeholder="Enter contact number">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="id-valid-from">📅 Valid From</label>
+                            <input type="date" id="id-valid-from" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="id-valid-until">📅 Valid Until</label>
+                            <input type="date" id="id-valid-until" required>
+                        </div>
+                    </div>
+
+                    <!-- Photo Upload Section -->
+                    <div class="photo-upload-section">
+                        <h3>📷 Photo Upload</h3>
+                        <div class="photo-upload-container">
+                            <div class="photo-preview" id="photo-preview">
+                                <div class="photo-placeholder">
+                                    <div class="upload-icon">📷</div>
+                                    <p>Click to upload photo</p>
+                                    <small>Recommended: 300x400px, Max: 2MB</small>
+                                </div>
+                                <img id="preview-image" style="display: none;" alt="Preview">
+                            </div>
+                            <input type="file" id="photo-upload" accept="image/*" style="display: none;">
+                            <div class="photo-controls">
+                                <button type="button" class="btn btn-outline" onclick="triggerPhotoUpload()">Choose Photo</button>
+                                <button type="button" class="btn btn-danger" onclick="removePhoto()" id="remove-photo" style="display: none;">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id-card-template">🎨 Template</label>
+                        <select id="id-card-template" required>
+                            <option value="corporate">Corporate Professional</option>
+                            <option value="modern">Modern Gradient</option>
+                            <option value="academic">Academic Classic</option>
+                            <option value="minimal">Minimal Clean</option>
+                            <option value="colorful">Colorful Creative</option>
+                            <option value="security">Security Enhanced</option>
+                        </select>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" onclick="previewIdCard()">Preview</button>
+                        <button type="submit" class="btn btn-primary">Generate ID Card</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- Bulk Generation Form -->
+    <div id="bulk-generation-form" class="page">
+        <header class="form-header">
+            <button class="btn btn-outline" onclick="showDashboard()">← Back to Dashboard</button>
+            <h2>Bulk Document Generation</h2>
+        </header>
+        <main class="form-main">
+            <div class="container">
+                <div class="bulk-steps">
+                    <div class="step active" id="step-1">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h3>Choose Document Type</h3>
+                            <div class="document-type-selector">
+                                <label class="radio-card">
+                                    <input type="radio" name="bulk-doc-type" value="marksheet" checked>
+                                    <div class="radio-content">
+                                        <div class="radio-icon">📋</div>
+                                        <span>Marksheets</span>
+                                    </div>
+                                </label>
+                                <label class="radio-card">
+                                    <input type="radio" name="bulk-doc-type" value="certificate">
+                                    <div class="radio-content">
+                                        <div class="radio-icon">🏆</div>
+                                        <span>Certificates</span>
+                                    </div>
+                                </label>
+                                <label class="radio-card">
+                                    <input type="radio" name="bulk-doc-type" value="admit-card">
+                                    <div class="radio-content">
+                                        <div class="radio-icon">🎫</div>
+                                        <span>Admit Cards</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step" id="step-2">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h3>Upload Data File</h3>
+                            <div class="file-upload-area">
+                                <div class="upload-zone" id="upload-zone" onclick="triggerFileUpload()">
+                                    <div class="upload-icon">📁</div>
+                                    <h4>Drop your CSV or Excel file here</h4>
+                                    <p>or click to browse (max 100 records)</p>
+                                    <input type="file" id="bulk-file-input" accept=".csv,.xlsx,.xls" style="display: none;" onchange="handleFileUpload(event)">
+                                </div>
+                                <div class="file-info" id="file-info" style="display: none;">
+                                    <div class="file-details">
+                                        <span class="file-name" id="file-name"></span>
+                                        <span class="file-size" id="file-size"></span>
+                                        <span class="record-count" id="record-count"></span>
+                                    </div>
+                                    <button class="btn btn-outline btn-small" onclick="removeFile()">Remove</button>
+                                </div>
+                            </div>
+                            <div class="template-download">
+                                <h4>Need a template?</h4>
+                                <button class="btn btn-outline" onclick="downloadTemplate()">Download CSV Template</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step" id="step-3">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h3>Configure Settings</h3>
+                            <div class="bulk-settings">
+                                <div class="form-group">
+                                    <label for="bulk-institution">Institution Name</label>
+                                    <input type="text" id="bulk-institution" placeholder="Enter institution name" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="bulk-logo">Institution Logo (Optional)</label>
+                                    <div class="logo-upload-container">
+                                        <div class="logo-upload-zone" id="logo-upload-zone" onclick="triggerLogoUpload()">
+                                            <div class="logo-preview" id="logo-preview" style="display: none;">
+                                                <img id="logo-image" src="" alt="Institution Logo">
+                                                <button type="button" class="remove-logo-btn" onclick="removeLogo()">×</button>
+                                            </div>
+                                            <div class="logo-placeholder" id="logo-placeholder">
+                                                <div class="upload-icon">🏛️</div>
+                                                <p>Click to upload logo</p>
+                                                <small>PNG, JPG, GIF (max 2MB)</small>
+                                            </div>
+                                        </div>
+                                        <input type="file" id="bulk-logo-input" accept=".png,.jpg,.jpeg,.gif" style="display: none;" onchange="handleLogoUpload(event)">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="bulk-template">Template Style</label>
+                                    <select id="bulk-template" required>
+                                        <option value="classic">Classic</option>
+                                        <option value="modern">Modern</option>
+                                        <option value="elegant">Elegant</option>
+                                        <option value="creative">Creative</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" id="exam-settings" style="display: none;">
+                                    <label for="bulk-exam">Exam Name</label>
+                                    <input type="text" id="bulk-exam" placeholder="Enter exam name">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step" id="step-4">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h3>Preview & Generate</h3>
+                            <div class="data-preview" id="data-preview">
+                                <!-- Data preview will be shown here -->
+                            </div>
+                            <div class="generation-progress" id="generation-progress" style="display: none;">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="progress-fill"></div>
+                                </div>
+                                <div class="progress-text" id="progress-text">Preparing...</div>
+                            </div>
+                            <div class="generation-results" id="generation-results" style="display: none;">
+                                <h4>Generation Complete!</h4>
+                                <div class="results-summary">
+                                    <span id="success-count">0</span> documents generated successfully
+                                    <span id="error-count" style="display: none;">0 errors</span>
+                                </div>
+                                <button class="btn btn-primary" id="download-all-btn" onclick="downloadAllDocuments()">Download All (ZIP)</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bulk-navigation">
+                    <button class="btn btn-outline" id="prev-btn" onclick="previousStep()" style="display: none;">Previous</button>
+                    <button class="btn btn-primary" id="next-btn" onclick="nextStep()">Next</button>
+                    <button class="btn btn-primary" id="generate-btn" onclick="startBulkGeneration()" style="display: none;">Generate All</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- History Page -->
+    <div id="history-page" class="page">
+        <header class="form-header">
+            <button class="btn btn-outline" onclick="showDashboard()">← Back to Dashboard</button>
+            <h2>My History</h2>
+        </header>
+        <main class="form-main">
+            <div class="container">
+                <div id="history-list" class="history-list">
+                    <!-- History items will be populated here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Preview Modal -->
+    <div id="preview-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="preview-title">Document Preview</h3>
+                <span class="close" onclick="closePreview()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <canvas id="preview-canvas"></canvas>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closePreview()">Close</button>
+                <button class="btn btn-primary" onclick="downloadFromPreview()">Download PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
